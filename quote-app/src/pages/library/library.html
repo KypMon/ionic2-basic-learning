@@ -1,29 +1,28 @@
-<!--
-  Generated template for the Library page.
 
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Quote library</ion-title>
+    <ion-buttons start>
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>Quotes Library</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-  <h3>Select your favorite quote</h3>
+  <h3 text-center>Select your favorite Quote</h3>
   <ion-list>
-    <button 
-    ion-item 
-    *ngFor="let quoteGroup of quoteCollection"
-    [navPush]="quotesPage"
-    [navParams]="quoteGroup"
-    >
-      <ion-icon name="{{quoteGroup.icon}}" item-left ></ion-icon>
-      <h2>{{ quoteGroup.category | uppercase}}</h2>
+    <button
+      ion-item
+      *ngFor="let quoteGroup of quoteCollection"
+      [navPush]="quotesPage"
+      [navParams]="quoteGroup">
+      <ion-icon [name]="quoteGroup.icon" item-left></ion-icon>
+      <h2>{{ quoteGroup.category | uppercase }}</h2>
       <p>{{ quoteGroup.quotes.length }} Quotes</p>
     </button>
   </ion-list>
