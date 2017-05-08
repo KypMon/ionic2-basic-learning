@@ -1,5 +1,9 @@
-import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { Component, OnInit } from '@angular/core';
+import { Quote } from "../../data/quote.interface";
+
+import quotes from '../../data/quotes';
+import { Quotes } from "../quotes/quotes";
+// import { IonicPage, NavController, NavParams } from 'ionic-angular';
 
 /**
  * Generated class for the Library page.
@@ -7,18 +11,25 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
  * See http://ionicframework.com/docs/components/#navigation for more info
  * on Ionic pages and navigation.
  */
-@IonicPage()
 @Component({
   selector: 'page-library',
   templateUrl: 'library.html',
 })
-export class Library {
+export class Library implements OnInit{
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  quoteCollection: {category: string, quotes: Quote[], icon: string}[];
+  quotesPage: Quotes;
+
+
+  ngOnInit() {
+    this.quoteCollection = quotes;
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad Library');
-  }
+  // constructor(public navCtrl: NavController, public navParams: NavParams) {
+  // }
+
+  // ionViewDidLoad() {
+  //   console.log('ionViewDidLoad Library');
+  // }
 
 }
