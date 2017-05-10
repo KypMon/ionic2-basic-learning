@@ -13,13 +13,17 @@ export class QuotePage {
 
   constructor(private viewCtrl: ViewController,
               private navParams: NavParams) {
+                console.log("this is quote page")
   }
 
   ionViewDidLoad() {
+    console.log(this.navParams);
     this.person = this.navParams.get('person');
     this.text = this.navParams.get('text');
   }
 
+//delete the page
+//quit the modal by click the unfavorite button or other ways
   onClose(remove = false) {
     this.viewCtrl.dismiss(remove);
   }

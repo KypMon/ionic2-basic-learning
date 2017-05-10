@@ -17,6 +17,7 @@ export class FavoritesPage {
   constructor(private quotesService: QuotesService,
               private modalCtrl: ModalController,
               private settingsService: SettingsService) {
+                
   }
 
   ionViewWillEnter() {

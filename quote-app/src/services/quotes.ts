@@ -16,6 +16,7 @@ export class QuotesService {
   }
 
   getFavoriteQuotes() {
+    //Use the slice() with no argument just create a copy not the origin array
     return this.favoriteQuotes.slice();
   }
 
