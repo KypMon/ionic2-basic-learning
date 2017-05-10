@@ -4,6 +4,7 @@
       <ion-title>Menu</ion-title>
     </ion-toolbar>
   </ion-header>
+
   <ion-content>
     <ion-list>
       <button ion-item (click)="onLoad(tabsPage)">
@@ -18,4 +19,5 @@
   </ion-content>
 </ion-menu>
 
+<!--The #nav link to the menu [content] then the toggle will work-->
 <ion-nav [root]="tabsPage" #nav></ion-nav>
