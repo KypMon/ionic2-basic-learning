@@ -1,6 +1,7 @@
+import { RecipesService } from './../../services/recipes';
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl, Validators, FormArray } from "@angular/forms";
-import { IonicPage, NavController, NavParams, ActionSheetController, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ActionSheetController, AlertController, ToastController } from 'ionic-angular';
 
 @IonicPage()
 @Component({
@@ -16,7 +17,9 @@ export class EditRecipePage implements OnInit {
     public navCtrl: NavController,
     public navParams: NavParams,
     private actionSheetController: ActionSheetController,
-    private alertCtrl: AlertController) {
+    private alertCtrl: AlertController,
+    private toastCtrl: ToastController,
+    private recipesService: RecipesService) {
   }
 
   ngOnInit() {
@@ -40,9 +43,26 @@ export class EditRecipePage implements OnInit {
 
   onSubmit() {
     console.log(this.recipeForm);
+    const value = this.recipeForm.value;
+    let ingredients = [];
+    if (value.ingredients.length > 0) {
+      ingredients = value.ingredients.map(name => {
+        return { name: name, amount: 1 };
+      });
+    }
+    console.log('??');
+    this.recipesService.addRecipe(
+      value.title,
+      value.description,
+      value.difficulty,
+      ingredients);
+
+    this.recipeForm.reset();
+    this.navCtrl.popToRoot();
   }
 
   onManageIngredients() {
+    console.log("this is the manage actionsheet");
     const actionSheet = this.actionSheetController.create({
       title: 'What dp you want to do',
       buttons: [
@@ -54,9 +74,23 @@ export class EditRecipePage implements OnInit {
         },
         {
           text: 'Remove all the ingredient',
-          role:'destructive',
+          role: 'destructive',
           handler: () => {
-
+            const fArray: FormArray = <FormArray>this.recipeForm.get('ingredients');
+            const len = fArray.length;
+            if (len > 0) {
+              for (let i = len - 1; i >= 0; i--) {
+                fArray.removeAt(i);
+              }
+              const toast = this.toastCtrl.create({
+                message: 'All ingredient were removed',
+                duration: 1000,
+                position: 'bottom'
+              });
+              //remember to add present() function to show the component
+              //present() function add on the result of the create({}) method
+              toast.present();
+            }
           }
         },
         {
@@ -69,6 +103,7 @@ export class EditRecipePage implements OnInit {
   }
 
   private createNewIngredientAlert() {
+    console.log("this is the alert add ingredient");
     return this.alertCtrl.create({
       title: 'Add Ingredient',
       inputs: [
@@ -87,11 +122,24 @@ export class EditRecipePage implements OnInit {
           text: 'Add',
           handler: data => {
             //name
-            if(data.name.trim() == '' || data.name == null) {
-              return; 
+            //if input is empty
+            if (data.name.trim() == '' || data.name == null) {
+              const toast = this.toastCtrl.create({
+                message: 'Please enter a valid value',
+                duration: 1000,
+                position: 'bottom'
+              });
+              toast.present();
+              return;
             }
             (<FormArray>this.recipeForm.get('ingredients'))
               .push(new FormControl(data.name, Validators.required));
+            const toast = this.toastCtrl.create({
+              message: 'Item added',
+              duration: 1000,
+              position: 'bottom'
+            });
+            toast.present();
           }
         }
       ]

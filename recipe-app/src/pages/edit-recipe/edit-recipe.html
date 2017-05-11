@@ -8,7 +8,8 @@
 
 
 <ion-content padding>
-  <form [formGroup]="recipeForm" (ngSubmit)="OnSubmit()">
+  <form [formGroup]="recipeForm" (ngSubmit)="onSubmit()">
+
     <ion-list>
       <ion-item>
         <ion-label floating>Title</ion-label>
@@ -43,8 +44,8 @@
       </ion-item>
     </ion-list>
 
-    <button ion-button type="submit" block>
-      {{ node }} Recipe
-    </button>
+    <button type="submit" ion-button block [disabled]="!recipeForm.valid">
+      {{ mode }} Recipe
+      </button>
   </form>
 </ion-content>
