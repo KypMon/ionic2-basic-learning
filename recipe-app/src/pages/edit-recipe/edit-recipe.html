@@ -1,18 +1,50 @@
-<!--
-  Generated template for the EditRecipe page.
-
-  See http://ionicframework.com/docs/components/#navigation for more info on
-  Ionic pages and navigation.
--->
 <ion-header>
 
   <ion-navbar>
-    <ion-title>edit-recipe</ion-title>
+    <ion-title>{{ node }} Recipe</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <form [formGroup]="recipeForm" (ngSubmit)="OnSubmit()">
+    <ion-list>
+      <ion-item>
+        <ion-label floating>Title</ion-label>
+        <ion-input type="text" formControlName="title"></ion-input>
+      </ion-item>
 
+      <ion-item>
+        <ion-label floating>Description</ion-label>
+        <ion-textarea formControlName="description">
+        </ion-textarea>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Difficulty</ion-label>
+        <ion-select formControlName="difficulty">
+          <ion-option *ngFor="let option of selectOptions" [value]="option">
+            {{ option }}
+          </ion-option>
+        </ion-select>
+      </ion-item>
+
+    </ion-list>
+
+    <button type="button" clear ion-button block (click)="onManageIngredients()">
+      Manage Ingredient
+    </button>
+
+    <ion-list formArrayName="ingredients">
+      <ion-item *ngFor="let igControl of recipeForm.get('ingredients').controls; let i = index">
+        <ion-label floating>Name</ion-label>
+        <ion-input type="text" [formControlName]="i"></ion-input>
+      </ion-item>
+    </ion-list>
+
+    <button ion-button type="submit" block>
+      {{ node }} Recipe
+    </button>
+  </form>
 </ion-content>
