@@ -1,3 +1,5 @@
+import { SignupPage } from './../pages/signup/signup';
+import { SigninPage } from './../pages/signin/signin';
 import { RecipesService } from './../services/recipes';
 import { ShoppingListService } from './../services/shopping-list';
 import { BrowserModule } from '@angular/platform-browser';
@@ -20,7 +22,9 @@ import { TabsPage } from "../pages/tabs/tabs";
     RecipePage,
     RecipesPage,
     ShoppingListPage,
-    TabsPage
+    TabsPage,
+    SigninPage,
+    SignupPage
   ],
   imports: [
     BrowserModule,
@@ -33,7 +37,9 @@ import { TabsPage } from "../pages/tabs/tabs";
     RecipePage,
     RecipesPage,
     ShoppingListPage,
-    TabsPage
+    TabsPage,
+    SigninPage,
+    SignupPage
   ],
   providers: [
     StatusBar,
