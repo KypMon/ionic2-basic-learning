@@ -1,7 +1,3 @@
-import { SignupPage } from './../pages/signup/signup';
-import { SigninPage } from './../pages/signin/signin';
-import { RecipesService } from './../services/recipes';
-import { ShoppingListService } from './../services/shopping-list';
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule } from 'ionic-angular';
@@ -14,6 +10,11 @@ import { RecipePage } from "../pages/recipe/recipe";
 import { RecipesPage } from "../pages/recipes/recipes";
 import { ShoppingListPage } from "../pages/shopping-list/shopping-list";
 import { TabsPage } from "../pages/tabs/tabs";
+import { AuthService } from './../services/auth';
+import { SignupPage } from './../pages/signup/signup';
+import { SigninPage } from './../pages/signin/signin';
+import { RecipesService } from './../services/recipes';
+import { ShoppingListService } from './../services/shopping-list';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { TabsPage } from "../pages/tabs/tabs";
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     ShoppingListService,
-    RecipesService
+    RecipesService,
+    AuthService
   ]
 })
 export class AppModule {}
