@@ -1,10 +1,11 @@
-import { SLOptionsPage } from './sl-options/sl-options';
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 
 import { Ingredient } from './../../models/ingredient';
 import { ShoppingListService } from './../../services/shopping-list';
+import { AuthService } from './../../services/auth';
+import { SLOptionsPage } from './sl-options/sl-options';
 
 @IonicPage()
 @Component({
@@ -18,7 +19,8 @@ export class ShoppingListPage {
     private slService: ShoppingListService,
     public navCtrl: NavController,
     public navParams: NavParams,
-    private popoverCtrl: PopoverController) {
+    private popoverCtrl: PopoverController,
+    private authService: AuthService) {
   }
 
   ionViewWillEnter() {
@@ -40,6 +42,26 @@ export class ShoppingListPage {
   onShowOptions(event: MouseEvent) {
     const popover = this.popoverCtrl.create(SLOptionsPage);
     popover.present({ev: event});
+    popover.onDidDismiss(
+      data => {
+        if(data.action == 'load') {
+
+        } else {
+          this.authService.getActiveUser().getToken()
+            .then(
+              (token: string) => {
+                this.slService.storeList(token)
+                  .subscribe(
+                    () => console.log('Success'),
+                    error => {
+                      console.log(error);
+                    }
+                  );
+              }
+            );
+        }
+      }
+    );
   }
 
   private loadItems() {
