@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, PopoverController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, PopoverController, LoadingController, AlertController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 
 import { Ingredient } from './../../models/ingredient';
 import { ShoppingListService } from './../../services/shopping-list';
 import { AuthService } from './../../services/auth';
-import { SLOptionsPage } from './sl-options/sl-options';
+import { DatabaseOptionsPage } from '../database-options/database-options';
 
 @IonicPage()
 @Component({
@@ -20,7 +20,9 @@ export class ShoppingListPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private popoverCtrl: PopoverController,
-    private authService: AuthService) {
+    private authService: AuthService,
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController) {
   }
 
   ionViewWillEnter() {
@@ -40,24 +42,53 @@ export class ShoppingListPage {
   }
 
   onShowOptions(event: MouseEvent) {
-    const popover = this.popoverCtrl.create(SLOptionsPage);
-    popover.present({ev: event});
+    const loading = this.loadingCtrl.create({
+      content: "please wait"
+    });
+    const popover = this.popoverCtrl.create(DatabaseOptionsPage);
+    popover.present({ ev: event });
     popover.onDidDismiss(
       data => {
-        if(data.action == 'load') {
-
-        } else {
+        if (data.action == 'load') {
+          loading.present();
           this.authService.getActiveUser().getToken()
             .then(
-              (token: string) => {
-                this.slService.storeList(token)
-                  .subscribe(
-                    () => console.log('Success'),
-                    error => {
-                      console.log(error);
-                    }
-                  );
-              }
+            (token: string) => {
+              this.slService.fetchList(token)
+                .subscribe(
+                (list: Ingredient[]) => {
+                  loading.dismiss();
+                  console.log('Success');
+                  if (list) {
+                    this.listItems = list;
+                  } else {
+                    this.listItems = [];
+                  }
+                },
+                error => {
+                  loading.dismiss();
+                  this.handleError(error.json().error);
+                }
+                );
+            }
+            );
+        } else if (data.action == 'store') {
+          loading.present();
+          this.authService.getActiveUser().getToken()
+            .then(
+            (token: string) => {
+              this.slService.storeList(token)
+                .subscribe(
+                () => {
+                  loading.dismiss();
+                  console.log('Success');
+                },
+                error => {
+                  loading.dismiss();
+                  this.handleError(error.json().error);
+                }
+                );
+            }
             );
         }
       }
@@ -66,6 +97,15 @@ export class ShoppingListPage {
 
   private loadItems() {
     this.listItems = this.slService.getItems();
+  }
+
+  private handleError(errorMessage: string) {
+    const alert = this.alertCtrl.create({
+      title: 'an Error occurred',
+      message: errorMessage,
+      buttons: ['OK']
+    });
+    alert.present();
   }
 
 

@@ -32,13 +32,29 @@ export class ShoppingListService {
         this.ingredients.splice(index, 1);
     }
 
-  storeList(token: string) {
-    const userId = this.authService.getActiveUser().uid;
-    console.log(userId);
-    return this.http
-      .put('https://ionic2-recipe-84fda.firebaseio.com/' + userId + '/shopping-list.json?auth=' + token, this.ingredients)
-      .map((response: Response) => {
-        return response.json();
-      });
-  }
+    storeList(token: string) {
+        const userId = this.authService.getActiveUser().uid;
+        console.log(userId);
+        return this.http
+            .put('https://ionic2-recipe-84fda.firebaseio.com/' + userId + '/shopping-list.json?auth=' + token, this.ingredients)
+            .map((response: Response) => {
+                return response.json();
+            });
+    }
+
+    fetchList(token: string) {
+        const userId = this.authService.getActiveUser().uid;
+        return this.http.get('https://ionic2-recipe-84fda.firebaseio.com/' + userId + '/shopping-list.json?auth=' + token)
+            .map((response: Response) => {
+                return response.json();
+            })
+            .do((ingredients: Ingredient[]) => {
+                if (ingredients) {
+                    this.ingredients = ingredients;
+                } else {
+                    this.ingredients = [];
+                }
+            });
+    }
+
 }
