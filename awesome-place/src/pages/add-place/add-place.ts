@@ -5,9 +5,15 @@ import { NgForm } from "@angular/forms";
 //feature for ionicnative3
 import { Geolocation } from '@ionic-native/geolocation';
 import { Camera, CameraOptions } from '@ionic-native/camera';
+import { File, Entry, FileError } from '@ionic-native/file';
+
 
 import { SetLocationPage } from './../set-location/set-location';
+import { PlacesService } from './../../services/places';
+
 import { Location } from './../../models/location';
+
+declare var cordova: any;
 
 @IonicPage()
 @Component({
@@ -23,8 +29,10 @@ export class AddPlacePage {
     //feature for ionicnative3
     private geolocation: Geolocation,
     private camera: Camera,
+    private file: File,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController) {
+    private toastCtrl: ToastController,
+    private placesService: PlacesService) {
   }
 
   ionViewDidLoad() {
@@ -39,9 +47,18 @@ export class AddPlacePage {
 
   locationIsSet = false;
 
+  imageUrl = '';
+
   //Method
   onSubmit(form: NgForm) {
-    console.log(form.value);
+    this.placesService.addPlace(form.value.title, form.value.description, this.location, this.imageUrl);
+    form.reset();
+    this.location = {
+      lat: 40.7624324,
+      lng: -73.9759827
+    };
+    this.imageUrl = '';
+    this.locationIsSet = false;
   }
 
   onOpenMap() {
@@ -98,16 +115,47 @@ export class AddPlacePage {
       encodingType: this.camera.EncodingType.JPEG,
       correctOrientation: true
     })
-    .then(
+      .then(
       imageData => {
-        console.log(imageData);
+        //replace all the slash and backSlash
+        const currentName = imageData.replace(/^.*[\\\/]/, '');
+        //replace the end of the path of slash 
+        const path = imageData.replace(/[^\/]*$/, '');
+        //fix the bug of the same file name
+        const newFileName = new Date().getUTCMilliseconds() + '.jpg';
+        //old path, old filename, new path, new filename
+        this.file.moveFile(path, currentName, cordova.file.dataDirectory, newFileName)
+          .then(
+            (data: Entry) => {
+              this.imageUrl = data.nativeURL;
+              this.camera.cleanup();
+              this.file.removeFile(path, currentName);
+            }
+          )
+          .catch(
+          (err: FileError) => {
+            this.imageUrl = '';
+            const toast = this.toastCtrl.create({
+              message: 'Could not save the image. Please try again',
+              duration: 2500
+            });
+            toast.present();
+            this.camera.cleanup();
+          }
+          );
+        this.imageUrl = imageData;
       }
-    )
-    .catch(
+      )
+      .catch(
       err => {
+        const toast = this.toastCtrl.create({
+          message: 'Could not take the image. Please try again',
+          duration: 2500
+        });
+        toast.present();
         console.log(err);
       }
-    );
+      );
   }
 
 

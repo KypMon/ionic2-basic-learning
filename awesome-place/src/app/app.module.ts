@@ -5,14 +5,17 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { AgmCoreModule } from 'angular2-google-maps/core';
 //feature for ionicnative3
+import { IonicStorageModule } from '@ionic/storage'
 import { Geolocation } from '@ionic-native/geolocation';
 import { Camera } from '@ionic-native/camera';
+import { File } from '@ionic-native/file';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { PlacePage } from './../pages/place/place';
 import { SetLocationPage } from './../pages/set-location/set-location';
 import { AddPlacePage } from './../pages/add-place/add-place';
+import { PlacesService } from './../services/places';
 
 @NgModule({
   declarations: [
@@ -28,7 +31,8 @@ import { AddPlacePage } from './../pages/add-place/add-place';
     //use for add the google map module
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyAVjYHMqjO6-04ENRcYQGMtj0gz2BGbSYU'
-    })
+    }),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -44,7 +48,9 @@ import { AddPlacePage } from './../pages/add-place/add-place';
     //feature for ionicnative3
     Geolocation,
     Camera, 
-    { provide: ErrorHandler, useClass: IonicErrorHandler }
+    File,
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    PlacesService
   ]
 })
 export class AppModule { }
