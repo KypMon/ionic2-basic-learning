@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, LoadingController, ToastController } from 'ionic-angular';
 import { NgForm } from "@angular/forms";
+
+//feature for ionicnative3
 import { Geolocation } from '@ionic-native/geolocation';
+import { Camera, CameraOptions } from '@ionic-native/camera';
 
 import { SetLocationPage } from './../set-location/set-location';
 import { Location } from './../../models/location';
@@ -17,7 +20,11 @@ export class AddPlacePage {
     public navCtrl: NavController,
     public navParams: NavParams,
     private modalCtrl: ModalController,
-    private geolocation: Geolocation) {
+    //feature for ionicnative3
+    private geolocation: Geolocation,
+    private camera: Camera,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController) {
   }
 
   ionViewDidLoad() {
@@ -58,20 +65,49 @@ export class AddPlacePage {
   }
 
   onLocate() {
+    const loader = this.loadingCtrl.create({
+      content: 'Getting you location'
+    });
+    loader.present();
+    //feature for ionicnative3
     this.geolocation.getCurrentPosition()
       .then(
-        location => {
-          console.log(location);
-          this.location.lat = location.coords.latitude;
-          this.location.lng = location.coords.longitude;
-          this.locationIsSet = true;
-        }
+      location => {
+        loader.dismiss();
+        console.log(location);
+        this.location.lat = location.coords.latitude;
+        this.location.lng = location.coords.longitude;
+        this.locationIsSet = true;
+      }
       )
       .catch(
-        error => {
-          console.log(error);
-        }
+      error => {
+        loader.dismiss();
+        const toast = this.toastCtrl.create({
+          message: 'Could not get your current location',
+          duration: 2500
+        });
+        toast.present();
+        console.log(error);
+      }
       );
+  }
+
+  onTakePhoto() {
+    this.camera.getPicture({
+      encodingType: this.camera.EncodingType.JPEG,
+      correctOrientation: true
+    })
+    .then(
+      imageData => {
+        console.log(imageData);
+      }
+    )
+    .catch(
+      err => {
+        console.log(err);
+      }
+    );
   }
 
 
