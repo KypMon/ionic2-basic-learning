@@ -31,25 +31,26 @@ export class WeatherPage implements OnInit {
 
   //method
 
-  getDefaultLocation() {
-    this.zmw = '10001.11.99999';
+  getDefaultLocation(){
+    if(localStorage.getItem('location') !== undefined){
+      this.zmw = JSON.parse(localStorage.getItem('location')).zmw;
+    } else {
+      this.zmw = '10001.11.99999';
+    }
   }
 
-  getQuery() {
+
+  getQuery(){
     this.weatherService.searchCities(this.searchStr)
-      .subscribe(
-      res => {
+      .subscribe(res => {
         this.results = res.RESULTS;
-        console.log(res);
-      }
-      )
+      });
   }
 
-  chooseLocation(location) {
+  chooseLocation(location){
     this.results = [];
     this.weatherService.getWeather(location.zmw)
       .subscribe(weather => {
-        console.log(weather);
         this.weather = weather.current_observation;
       });
   }
